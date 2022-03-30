@@ -1,0 +1,1 @@
+docker run -dit -P vulfocus/spring-core-rce-2022-03-29
